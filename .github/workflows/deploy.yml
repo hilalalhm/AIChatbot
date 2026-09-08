@@ -1,0 +1,41 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main, master]
+
+jobs:
+  test-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      - name: Run tests
+        env:
+          DATABASE_URL: sqlite:///./data/ci.db
+        run: |
+          pytest -v
+
+      - name: Deploy to Jagoan Hosting
+        if: github.ref == 'refs/heads/main'
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          port: ${{ secrets.PORT }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            export DEPLOY_PATH="${{ secrets.DEPLOY_PATH }}"
+            export RESTART_CMD="${{ secrets.RESTART_CMD }}"
+            bash scripts/deploy.sh
