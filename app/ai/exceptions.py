@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 
 class ProviderError(Exception):
     """Base class for provider errors."""
@@ -43,8 +45,9 @@ class ProviderHTTPError(ProviderError):
     status = "failed"
     error_type = "http"
 
-    def __init__(self, status_code: int, message: str = ""):
+    def __init__(self, status_code: int, message: str = "", latency_ms: Optional[int] = None):
         self.status_code = status_code
+        self.latency_ms = latency_ms
         super().__init__(message)
         if status_code in (401, 403):
             self.error_type = "authentication"

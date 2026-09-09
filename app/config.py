@@ -52,7 +52,7 @@ class Settings(BaseSettings):
 
     gemini_api_key: Optional[str] = None
     gemini_base_url: str = "https://generativelanguage.googleapis.com/v1beta/openai/"
-    gemini_model: str = "gemini-2.5-flash"
+    gemini_model: str = "gemini-3.6-flash"
 
     @property
     def provider_order(self) -> List[str]:

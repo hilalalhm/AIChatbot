@@ -144,6 +144,11 @@ class OpenAICompatibleProvider(AIProvider):
         )
 
 
-def _annotate(exc: Exception, latency_ms: int) -> Exception:
-    setattr(exc, "latency_ms", latency_ms)
+def _annotate(exc: Exception) -> Exception:
+    latency = getattr(exc, "latency_ms", None)
+    if latency is None:
+        args = getattr(exc, "args", ())
+        if len(args) >= 2:
+            latency = args[1]
+    setattr(exc, "latency_ms", latency)
     return exc
