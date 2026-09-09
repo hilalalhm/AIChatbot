@@ -1,4 +1,5 @@
 import asyncio
+import time
 
 import pytest
 
@@ -24,7 +25,7 @@ def test_circuit_breaker_recovers_after_success():
     cb.record_failure()
     assert cb.state == cb.OPEN
     # Simulate cooldown passing -> half open
-    cb._opened_at = 0  # opened in the past
+    cb._opened_at = time.monotonic() - 1000  # opened long ago
     assert cb.state == cb.HALF_OPEN
     assert cb.is_available() is True
     cb.record_success()

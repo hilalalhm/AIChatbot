@@ -22,8 +22,12 @@ class CircuitBreaker:
         cooldown_seconds: int = None,
     ):
         self.name = name
-        self.failure_threshold = failure_threshold or settings.circuit_breaker_failure_threshold
-        self.cooldown_seconds = cooldown_seconds or settings.circuit_breaker_cooldown_seconds
+        self.failure_threshold = (
+            failure_threshold if failure_threshold is not None else settings.circuit_breaker_failure_threshold
+        )
+        self.cooldown_seconds = (
+            cooldown_seconds if cooldown_seconds is not None else settings.circuit_breaker_cooldown_seconds
+        )
         self._state = self.HEALTHY
         self._failure_count = 0
         self._opened_at: float = 0.0
