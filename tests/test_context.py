@@ -37,8 +37,8 @@ def test_context_snapshot_to_provider_messages():
     recent = [_msg("user", "hello")]
     snap = cm.build_context(recent, "question", summary="sum", memory="mem")
     messages = snap.to_provider_messages()
-    assert messages[-1] == {"role": "user", "content": "question"}
+    assert messages[-1].role == "user" and messages[-1].content == "question"
     # Summary and memory included as system messages
-    contents = " ".join(m["content"] for m in messages)
+    contents = " ".join(m.content for m in messages)
     assert "sum" in contents
     assert "mem" in contents
