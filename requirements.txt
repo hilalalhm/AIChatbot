@@ -10,4 +10,3 @@ alembic>=1.13.0,<2.0.0
 httpx>=0.25.0,<1.0.0
 python-dotenv>=1.0.0,<2.0.0
 python-telegram-bot>=21.0,<22.0
-a2wsgi>=1.10.0,<2.0.0
