@@ -6,6 +6,7 @@ set -euo pipefail
 # Configurable values (override via environment)
 DEPLOY_PATH="${DEPLOY_PATH:-}"
 RESTART_CMD="${RESTART_CMD:-}"
+VENV_BIN="${VENV_BIN:-/home/jasanika/virtualenv/apps/AIChatBot/3.12/bin}"
 
 if [[ -z "$DEPLOY_PATH" ]]; then
     echo "ERROR: DEPLOY_PATH is not set." >&2
@@ -19,11 +20,11 @@ echo "==> Updating code"
 git pull --ff-only || { echo "ERROR: git pull failed" >&2; exit 1; }
 
 echo "==> Installing dependencies"
-pip install -r requirements.txt
+"$VENV_BIN/pip" install -r requirements.txt
 
 echo "==> Running migrations (if required)"
-if command -v alembic >/dev/null 2>&1; then
-    alembic upgrade head
+if [[ -x "$VENV_BIN/alembic" ]]; then
+    "$VENV_BIN/alembic" upgrade head
 else
     echo "alembic not available; skipping migrations. Ensure DB is initialized by the app on startup."
 fi
