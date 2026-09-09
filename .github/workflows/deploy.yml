@@ -39,4 +39,5 @@ jobs:
           script: |
             export DEPLOY_PATH="${{ secrets.DEPLOY_PATH }}"
             export RESTART_CMD="${{ secrets.RESTART_CMD }}"
+            cd "$DEPLOY_PATH" || exit 1
             bash scripts/deploy.sh
