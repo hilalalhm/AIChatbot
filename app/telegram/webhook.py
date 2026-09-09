@@ -14,10 +14,13 @@ logger = logging.getLogger(__name__)
 router = APIRouter(tags=["telegram"])
 
 
-async def _validate_secret(request: Request, x_telegram_bot_api_secret: str = Header(None)) -> None:
+async def _validate_secret(
+    request: Request,
+    x_telegram_bot_api_secret_token: str = Header(None, alias="X-Telegram-Bot-Api-Secret-Token"),
+) -> None:
     if not settings.telegram_webhook_secret:
         return
-    provided = x_telegram_bot_api_secret or ""
+    provided = x_telegram_bot_api_secret_token or ""
     expected = settings.telegram_webhook_secret
     if not hmac.compare_digest(provided, expected):
         raise HTTPException(status_code=403, detail="Invalid webhook secret")
