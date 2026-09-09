@@ -48,7 +48,7 @@ def _ensure_dir(url: str) -> None:
 async_url = _async_url(settings.database_url)
 _ensure_dir(settings.database_url)
 
-engine = create_async_engine(async_url, echo=settings.debug)
+engine = create_async_engine(async_url, echo=settings.debug, pool_pre_ping=True)
 
 SessionLocal = async_sessionmaker(
     bind=engine,
