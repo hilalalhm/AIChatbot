@@ -20,7 +20,7 @@ def test_circuit_breaker_states():
 
 
 def test_circuit_breaker_recovers_after_success():
-    cb = CircuitBreaker("test", failure_threshold=2, cooldown_seconds=0)
+    cb = CircuitBreaker("test", failure_threshold=2, cooldown_seconds=60)
     cb.record_failure()
     cb.record_failure()
     assert cb.state == cb.OPEN
