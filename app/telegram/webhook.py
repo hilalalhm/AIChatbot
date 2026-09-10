@@ -1,15 +1,11 @@
 from __future__ import annotations
 
-import hashlib
 import hmac
-import logging
 
-from fastapi import APIRouter, Depends, Header, HTTPException, Request
+from fastapi import APIRouter, BackgroundTasks, Depends, Header, HTTPException, Request
 
 from app.config import settings
 from app.deps import Container, get_container
-
-logger = logging.getLogger(__name__)
 
 router = APIRouter(tags=["telegram"])
 
@@ -29,6 +25,7 @@ async def _validate_secret(
 @router.post("/telegram/webhook", dependencies=[Depends(_validate_secret)])
 async def telegram_webhook(
     request: Request,
+    background_tasks: BackgroundTasks,
     container: Container = Depends(get_container),
 ) -> dict:
     try:
@@ -36,10 +33,5 @@ async def telegram_webhook(
     except Exception:
         raise HTTPException(status_code=400, detail="Invalid JSON body")
 
-    try:
-        await container.handlers.handle_update(payload)
-    except Exception as exc:  # noqa: BLE001
-        logger.exception("Webhook handler error: %s", exc)
-        raise HTTPException(status_code=500, detail="Internal handler error")
-
+    background_tasks.add_task(container.handlers.handle_update, payload)
     return {"ok": True}

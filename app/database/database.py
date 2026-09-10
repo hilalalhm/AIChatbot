@@ -48,7 +48,10 @@ def _ensure_dir(url: str) -> None:
 async_url = _async_url(settings.database_url)
 _ensure_dir(settings.database_url)
 
-engine = create_async_engine(async_url, echo=settings.debug, pool_pre_ping=True)
+engine_kwargs: dict = {"echo": settings.debug, "pool_pre_ping": True}
+if "mysql" in async_url or "postgres" in async_url:
+    engine_kwargs.update({"pool_size": 10, "max_overflow": 20})
+engine = create_async_engine(async_url, **engine_kwargs)
 
 SessionLocal = async_sessionmaker(
     bind=engine,

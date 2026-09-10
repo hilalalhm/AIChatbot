@@ -26,6 +26,7 @@ async def main() -> None:
     result = await bot.set_webhook(
         settings.telegram_webhook_url,
         secret=settings.telegram_webhook_secret,
+        max_connections=10,
     )
     logger.info("setWebhook result: %s", result)
     return 0

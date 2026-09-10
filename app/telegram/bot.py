@@ -74,12 +74,14 @@ class TelegramBot:
             "text": text,
         }
 
-    async def set_webhook(self, url: str, secret: Optional[str] = None) -> dict:
+    async def set_webhook(self, url: str, secret: Optional[str] = None, max_connections: Optional[int] = None) -> dict:
         if not self.configured:
             raise RuntimeError("Telegram bot token not configured.")
         payload: dict = {"url": url}
         if secret:
             payload["secret_token"] = secret
+        if max_connections:
+            payload["max_connections"] = max_connections
         resp = await self._client.post(self._url("setWebhook"), json=payload)
         return {"status": resp.status_code, "body": resp.json() if resp.status_code == 200 else resp.text}
 
